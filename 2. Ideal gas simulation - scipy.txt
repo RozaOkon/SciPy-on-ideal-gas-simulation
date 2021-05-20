@@ -1,0 +1,40 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+import scipy.stats.distributions
+
+data = np.loadtxt('Gases_data')
+d1 = data[:, 0]
+p1 = data[:, 1]
+s1 = data[:, 2]
+
+t2 = data[:, 3]
+p2 = data[:, 4]
+s2 = data[:, 5]
+
+plt.errorbar(d1, p1, yerr = s1, fmt = '.', capsize = 3)
+plt.xlabel('Box width [nm]')
+plt.ylabel('Gas pressure [kPa]')
+plt.title('Dependence of gas pressure on box width in isothtrmal conditions')
+plt.show()
+plt.errorbar(t2, p2, yerr = s2, fmt = '.', capsize = 3)
+plt.xlabel('Temperature ['r'$\degree$' 'C]')
+plt.ylabel('Gas pressure [kPa]')
+plt.title('Dependence of gas pressure on temperature in isochoric conditions')
+plt.show()
+
+def f(d1, a):
+    return a/d1
+
+par, cov = curve_fit(f, d1, p1, sigma = s1, absolute_sigma= True)
+
+print("Fitted parameters: ", par)
+print("a parameter uncertainly", np.sqrt(np.diag(cov)))
+
+plt.plot(d1, f(d1, *par))
+plt.show()
+
+
+
+print('Critical chi squared: ', scipy.stats.distributions.chi2.isf(0.05, 19))
+print('p value: ', 1 - scipy.stats.distributions.chi2.cdf(5.996406961, 19))
